@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hono Cloudflare App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .badge {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .api-endpoints {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .api-endpoints h2 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    code {
+      display: block;
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background: #48bb78;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 Hono Cloudflare App</h1>
+    <span class="badge">Edge Ready</span>
+    <p>
+      A type-safe Hono API deployed to Cloudflare Workers with integrated bindings 
+      for KV, D1, R2, Durable Objects, and Queues.
+    </p>
+    
+    <div class="api-endpoints">
+      <h2>📡 API Endpoints</h2>
+      <code>GET  /api/health          - Health check</code>
+      <code>GET  /api/cache/:key      - Get cached value</code>
+      <code>PUT  /api/cache/:key      - Set cached value</code>
+      <code>GET  /api/users           - List users</code>
+      <code>POST /api/users           - Create user</code>
+      <code>GET  /api/files/:key      - Download file</code>
+      <code>POST /api/files/:key      - Upload file</code>
+      <code>GET  /api/counter/:name   - Get counter value</code>
+      <code>POST /api/tasks           - Queue a task</code>
+    </div>
+    
+    <div class="status">
+      <div class="status-dot"></div>
+      <span>Running on Cloudflare Workers</span>
+    </div>
+  </div>
+</body>
+</html>

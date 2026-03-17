@@ -1,0 +1,51 @@
+name = "hono-cloudflare-app"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment Variables
+[vars]
+API_KEY = "your-api-key-here"
+APP_NAME = "Hono Cloudflare App"
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "CACHE"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "hono-app-db"
+database_id = "your-d1-database-id"
+preview_database_id = "your-preview-d1-database-id"
+
+# R2 Bucket
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "hono-app-bucket"
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "COUNTER"
+class_name = "Counter"
+
+# Queues
+[[queues.producers]]
+binding = "MY_QUEUE"
+queue = "hono-app-queue"
+
+# Consumers
+[[queues.consumers]]
+queue = "hono-app-queue"
+max_batch_size = 10
+max_batch_timeout = 30
+
+# Triggers (Cron)
+[triggers]
+crons = ["0 * * * *"]
+
+# Assets (Static Files)
+# [assets]
+# directory = "public"
