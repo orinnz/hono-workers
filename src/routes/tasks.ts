@@ -5,6 +5,10 @@ export const tasksRoutes = new Hono<{ Bindings: Bindings }>()
 
 // Queue a single task
 tasksRoutes.post('/', async (c) => {
+  if (!c.env.MY_QUEUE) {
+    return c.json({ error: 'Queue MY_QUEUE is disabled' }, 503)
+  }
+
   const { type, data } = await c.req.json()
 
   if (!type) {
@@ -24,6 +28,10 @@ tasksRoutes.post('/', async (c) => {
 
 // Queue multiple tasks
 tasksRoutes.post('/batch', async (c) => {
+  if (!c.env.MY_QUEUE) {
+    return c.json({ error: 'Queue MY_QUEUE is disabled' }, 503)
+  }
+
   const { tasks } = await c.req.json()
 
   if (!Array.isArray(tasks)) {

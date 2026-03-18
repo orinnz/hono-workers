@@ -26,3 +26,16 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 -- Create index on status for filtering
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+
+-- Image analysis table
+CREATE TABLE IF NOT EXISTS image_analysis (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  image_url VARCHAR(512) NOT NULL,
+  original_name VARCHAR(256) NOT NULL,
+  mime_type TEXT NOT NULL,
+  ai_response TEXT NOT NULL,
+  prompt_used TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_image_analysis_created_at ON image_analysis(created_at);

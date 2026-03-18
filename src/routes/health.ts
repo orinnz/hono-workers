@@ -14,6 +14,8 @@ healthRoutes.get('/', (c) => {
 
 // Detailed health check
 healthRoutes.get('/ready', async (c) => {
+  const maybeCache = (c.env as Partial<Bindings>).CACHE
+
   const checks = {
     kv: 'unknown',
     d1: 'unknown',
@@ -21,11 +23,15 @@ healthRoutes.get('/ready', async (c) => {
   }
 
   // Check KV
-  try {
-    await c.env.CACHE.get('health_check')
-    checks.kv = 'ok'
-  } catch {
-    checks.kv = 'error'
+  if (!maybeCache) {
+    checks.kv = 'disabled'
+  } else {
+    try {
+      await maybeCache.get('health_check')
+      checks.kv = 'ok'
+    } catch {
+      checks.kv = 'error'
+    }
   }
 
   // Check D1
@@ -44,7 +50,7 @@ healthRoutes.get('/ready', async (c) => {
     checks.r2 = 'ok' // May not exist, that's fine
   }
 
-  const allHealthy = Object.values(checks).every(v => v === 'ok')
+  const allHealthy = checks.d1 === 'ok' && checks.r2 === 'ok' && (checks.kv === 'ok' || checks.kv === 'disabled')
 
   return c.json({
     status: allHealthy ? 'ready' : 'degraded',

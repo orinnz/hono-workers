@@ -47,10 +47,9 @@ hono-cloudflare-app/
 │   │   ├── cache.ts          # KV cache endpoints
 │   │   ├── users.ts          # D1 user CRUD endpoints
 │   │   ├── files.ts          # R2 file storage endpoints
-│   │   ├── counter.ts        # Durable Object counter endpoints
 │   │   └── tasks.ts          # Queue task endpoints
 │   ├── durable-objects/
-│   │   └── counter.ts        # Counter Durable Object
+│   │   └── gemini-proxy.ts   # Gemini proxy Durable Object
 │   └── middleware/
 │       └── index.ts          # Auth, rate limiting, timing
 ├── public/
@@ -104,15 +103,6 @@ hono-cloudflare-app/
 | DELETE | `/api/files/:key` | Delete file |
 | GET | `/api/files` | List files |
 
-### Counter (Durable Objects)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/counter/:name` | Get counter value |
-| POST | `/api/counter/:name/increment` | Increment counter |
-| POST | `/api/counter/:name/decrement` | Decrement counter |
-| POST | `/api/counter/:name/reset` | Reset counter |
-
 ### Tasks (Queues)
 
 | Method | Endpoint | Description |
@@ -120,6 +110,22 @@ hono-cloudflare-app/
 | POST | `/api/tasks` | Queue a task |
 | POST | `/api/tasks/batch` | Queue multiple tasks |
 | GET | `/api/tasks/stats` | Get queue stats |
+
+### AI Image Analysis
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/ai/analyze` | Upload and analyze one image with Gemini |
+| GET | `/api/ai/analyses` | Get analysis history with pagination |
+| GET | `/api/ai/analyses/:id` | Get analysis detail by id |
+| GET | `/uploads/:filename` | Access uploaded image by public URL |
+
+### API Docs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/docs/openapi.json` | OpenAPI 3.0 specification |
+| GET | `/api/docs` | Swagger UI |
 
 ## Configuration
 
@@ -131,7 +137,12 @@ Edit `wrangler.toml` to configure:
 [vars]
 API_KEY = "your-api-key"
 APP_NAME = "Hono Cloudflare App"
+GEMINI_API_KEY = "your-gemini-api-key"
+GEMINI_DO_LOCATION_HINT = "oc"
 ```
+
+`GEMINI_DO_LOCATION_HINT` supports: `wnam`, `enam`, `sam`, `weur`, `eeur`, `apac`, `oc`, `afr`, `me`.
+Use a non-Hong-Kong region hint (for example `oc`) when Gemini access via Hong Kong is restricted.
 
 ### Cloudflare Resources
 
@@ -150,9 +161,26 @@ npx wrangler r2 bucket create hono-app-bucket
 
 # Create Queue
 npx wrangler queues create hono-app-queue
+
+# Durable Object migration for Gemini proxy
+npx wrangler deploy
 ```
 
 Update the IDs in `wrangler.toml` after creation.
+
+### Apply Database Schema Locally
+
+```bash
+npx wrangler d1 execute hono-app-db --local --file=schema.sql
+```
+
+### Upload Storage Strategy
+
+- The API exposes image URLs as `/uploads/<filename>`.
+- In Cloudflare runtime, uploaded files are stored in R2 under key prefix `uploads/` for production safety.
+- File names are generated as UUID + original extension.
+- Local `uploads/` folder exists to keep project contract/documentation aligned.
+- Retention strategy: keep images as analysis evidence by default; cleanup can be handled by periodic job based on `created_at` if required.
 
 ## Middleware
 
@@ -189,8 +217,22 @@ curl -X POST http://localhost:8787/api/users \
 # List users
 curl http://localhost:8787/api/users
 
-# Increment counter
-curl -X POST http://localhost:8787/api/counter/mycounter/increment
+# Analyze an image
+curl -X POST http://localhost:8787/api/ai/analyze \
+  -F "image=@./sample.jpg" \
+  -F "prompt=Describe this image in detail"
+
+# Get analyses list
+curl "http://localhost:8787/api/ai/analyses?limit=20&offset=0"
+
+# Get one analysis
+curl http://localhost:8787/api/ai/analyses/1
+```
+
+Run tests:
+
+```bash
+npm test
 ```
 
 ## License

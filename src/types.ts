@@ -4,6 +4,8 @@ export type Bindings = {
   // Environment variables
   API_KEY: string
   APP_NAME: string
+  GEMINI_API_KEY?: string
+  GEMINI_DO_LOCATION_HINT?: 'wnam' | 'enam' | 'sam' | 'weur' | 'eeur' | 'apac' | 'oc' | 'afr' | 'me'
 
   // KV Namespaces
   CACHE: KVNamespace
@@ -15,10 +17,10 @@ export type Bindings = {
   BUCKET: R2Bucket
 
   // Durable Objects
-  COUNTER: DurableObjectNamespace
+  GEMINI_PROXY?: DurableObjectNamespace
 
   // Queues
-  MY_QUEUE: Queue
+  MY_QUEUE?: Queue
 }
 
 // User type for D1

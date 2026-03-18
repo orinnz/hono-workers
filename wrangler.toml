@@ -7,40 +7,45 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 API_KEY = "your-api-key-here"
 APP_NAME = "Hono Cloudflare App"
+GEMINI_API_KEY = "asd"
+GEMINI_DO_LOCATION_HINT = "oc"
 
-# KV Namespaces
-[[kv_namespaces]]
-binding = "CACHE"
-id = "your-kv-namespace-id"
-preview_id = "your-preview-kv-namespace-id"
+# KV Namespaces (temporarily disabled)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
 
 # D1 Database
 [[d1_databases]]
 binding = "DB"
 database_name = "hono-app-db"
-database_id = "your-d1-database-id"
+database_id = "bc586377-b72c-4db8-a9ff-979f63be658c"
 preview_database_id = "your-preview-d1-database-id"
 
 # R2 Bucket
 [[r2_buckets]]
 binding = "BUCKET"
-bucket_name = "hono-app-bucket"
+bucket_name = "hono-bucket"
 
-# Durable Objects
 [[durable_objects.bindings]]
-name = "COUNTER"
-class_name = "Counter"
+name = "GEMINI_PROXY"
+class_name = "GeminiProxyDO"
 
-# Queues
-[[queues.producers]]
-binding = "MY_QUEUE"
-queue = "hono-app-queue"
+[[migrations]]
+tag = "v1-gemini-proxy"
+new_sqlite_classes = ["GeminiProxyDO"]
 
-# Consumers
-[[queues.consumers]]
-queue = "hono-app-queue"
-max_batch_size = 10
-max_batch_timeout = 30
+# Queues (temporarily disabled)
+# [[queues.producers]]
+# binding = "MY_QUEUE"
+# queue = "hono-app-queue"
+
+# Consumers (temporarily disabled)
+# [[queues.consumers]]
+# queue = "hono-app-queue"
+# max_batch_size = 10
+# max_batch_timeout = 30
 
 # Triggers (Cron)
 [triggers]
@@ -49,3 +54,9 @@ crons = ["0 * * * *"]
 # Assets (Static Files)
 # [assets]
 # directory = "public"
+
+
+[observability]
+[observability.logs]
+enabled = true
+invocation_logs = true
