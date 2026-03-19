@@ -1,3 +1,5 @@
+import type { Context } from 'hono'
+
 // Type definitions for Cloudflare bindings
 
 export type Bindings = {
@@ -43,3 +45,6 @@ export interface Task {
   data: any
   timestamp: string
 }
+
+// Hono context with bindings
+export type AppContext = Context<{ Bindings: Bindings }>

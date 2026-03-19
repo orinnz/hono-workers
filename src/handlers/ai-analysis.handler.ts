@@ -1,4 +1,3 @@
-import type { Context } from 'hono'
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import { HttpError, isHttpError } from '../lib/http-error'
 import { DEFAULT_IMAGE_PROMPT } from '../lib/constants'
@@ -7,7 +6,7 @@ import { GeminiAIService, type AIService } from '../services/ai/gemini-ai.servic
 import { DurableObjectAIService } from '../services/ai/durable-object-ai.service'
 import { ImageAnalysisService } from '../services/image-analysis.service'
 import { UploadStorageService } from '../services/storage/upload-storage.service'
-import type { Bindings } from '../types'
+import type { Bindings, AppContext } from '../types'
 
 function parseAIResponse(raw: string): unknown {
   try {
@@ -41,7 +40,7 @@ function parsePagination(rawLimit: string | undefined, rawOffset: string | undef
   return { limit, offset }
 }
 
-function errorJson(c: Context, error: unknown) {
+function errorJson(c: AppContext, error: unknown) {
   if (isHttpError(error)) {
     return c.json({
       error: {
@@ -84,7 +83,7 @@ export class AIAnalysisHandler {
     return GeminiAIService.getInstance(env.GEMINI_API_KEY)
   }
 
-  async analyze(c: Context<{ Bindings: Bindings }>) {
+  async analyze(c: AppContext) {
     try {
       console.info('Starting image analysis request')
       const { image, prompt } = await parseAndValidateAnalyzeMultipart(c.req.raw)
@@ -124,7 +123,7 @@ export class AIAnalysisHandler {
     }
   }
 
-  async getList(c: Context<{ Bindings: Bindings }>) {
+  async getList(c: AppContext) {
     try {
       const { limit, offset } = parsePagination(c.req.query('limit'), c.req.query('offset'))
       const dbService = new ImageAnalysisService(c.env.DB)
@@ -136,7 +135,7 @@ export class AIAnalysisHandler {
     }
   }
 
-  async getDetail(c: Context<{ Bindings: Bindings }>) {
+  async getDetail(c: AppContext) {
     try {
       const rawId = c.req.param('id')
       const id = parseId(rawId ?? '')
@@ -153,7 +152,7 @@ export class AIAnalysisHandler {
     }
   }
 
-  async getUploadedFile(c: Context<{ Bindings: Bindings }>) {
+  async getUploadedFile(c: AppContext) {
     try {
       const filename = c.req.param('filename')
 
