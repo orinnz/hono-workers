@@ -7,7 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 API_KEY = "your-api-key-here"
 APP_NAME = "Hono Cloudflare App"
-GEMINI_API_KEY = "asd"
 GEMINI_DO_LOCATION_HINT = "oc"
 
 # KV Namespaces (temporarily disabled)

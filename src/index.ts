@@ -12,6 +12,8 @@ import { healthRoutes } from './routes/health'
 import { usersRoutes } from './routes/users'
 import { filesRoutes } from './routes/files'
 import { createAIRoutes } from './routes/ai'
+import { barcodeRoutes } from './routes/barcode'
+
 import { AIAnalysisHandler } from './handlers/ai-analysis.handler'
 import { getOpenAPISpec } from './docs/openapi'
 import type { AIService } from './services/ai/gemini-ai.service'
@@ -57,6 +59,7 @@ export function createApp(dependencies: AppDependencies = {}) {
     )
   )
   app.get('/uploads/:filename', (c) => aiHandler.getUploadedFile(c))
+  app.route('/api/barcode', barcodeRoutes)
 
   // OpenAPI and Swagger
   app.get('/api/docs/openapi.json', (c) => {
