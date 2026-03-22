@@ -13,7 +13,6 @@ function toResponse(row: ImageAnalysis): ImageAnalysisResponse {
     originalName: row.original_name,
     mimeType: row.mime_type,
     aiResponse: row.ai_response,
-    promptUsed: row.prompt_used,
     createdAt: row.created_at
   }
 }
@@ -24,15 +23,14 @@ export class ImageAnalysisService {
   async createImageAnalysis(input: CreateImageAnalysisInput): Promise<ImageAnalysisResponse> {
     const result = await this.db
       .prepare(
-        `INSERT INTO image_analysis (image_url, original_name, mime_type, ai_response, prompt_used)
-         VALUES (?, ?, ?, ?, ?)`
+        `INSERT INTO image_analysis (image_url, original_name, mime_type, ai_response)
+         VALUES (?, ?, ?, ?)`
       )
       .bind(
         input.imageUrl,
         input.originalName,
         input.mimeType,
-        input.aiResponse,
-        input.promptUsed ?? null
+        input.aiResponse
       )
       .run()
 

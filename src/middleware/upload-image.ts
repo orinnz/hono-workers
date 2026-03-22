@@ -3,7 +3,6 @@ import { HttpError } from '../lib/http-error'
 
 export interface ParsedAnalyzeRequest {
   image: File
-  prompt?: string
 }
 
 function normalizeFileFromField(value: string | File | (string | File)[] | undefined): File | null {
@@ -44,11 +43,5 @@ export async function parseAndValidateAnalyzeMultipart(request: Request): Promis
     throw new HttpError(400, 'INVALID_INPUT', 'Image size exceeds 10MB limit')
   }
 
-  const promptRaw = formData.get('prompt')
-  const prompt = typeof promptRaw === 'string' && promptRaw.trim() ? promptRaw.trim() : undefined
-
-  return {
-    image,
-    prompt
-  }
+  return { image }
 }

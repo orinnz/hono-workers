@@ -1,11 +1,11 @@
-import { DEFAULT_IMAGE_PROMPT } from '../../lib/constants'
+import { SYSTEM_INSTRUCTION } from '../../lib/constants'
 import { GoogleGenAI } from '@google/genai'
 import { HttpError } from '../../lib/http-error'
-import { productAnalysisSchema } from './analysis-schema'
+import { geminiProductAnalysisSchema } from './analysis-schema'
 import { arrayBufferToBase64 } from './base64'
 
 export interface AIService {
-  analyzeImage(imageBuffer: ArrayBuffer, mimeType: string, prompt?: string): Promise<string>
+  analyzeImage(imageBuffer: ArrayBuffer, mimeType: string): Promise<string>
 }
 
 export class GeminiAIService implements AIService {
@@ -25,12 +25,10 @@ export class GeminiAIService implements AIService {
     this.ai = new GoogleGenAI({ apiKey })
   }
 
-  async analyzeImage(imageBuffer: ArrayBuffer, mimeType: string, prompt?: string): Promise<string> {
+  async analyzeImage(imageBuffer: ArrayBuffer, mimeType: string): Promise<string> {
     if (!this.apiKey) {
       throw new HttpError(503, 'DEPENDENCY_NOT_CONFIGURED', 'GEMINI_API_KEY is not configured')
     }
-
-    const promptUsed = prompt?.trim() || DEFAULT_IMAGE_PROMPT
 
     try {
       const response = await this.ai.models.generateContent({
@@ -39,7 +37,7 @@ export class GeminiAIService implements AIService {
           {
             role: 'user',
             parts: [
-              { text: promptUsed },
+              { text: "Analyze this food image." },
               {
                 inlineData: {
                   mimeType: mimeType,
@@ -50,7 +48,9 @@ export class GeminiAIService implements AIService {
           }
         ],
         config: {
-          responseMimeType: 'application/json'
+          systemInstruction: SYSTEM_INSTRUCTION,
+          responseMimeType: 'application/json',
+          responseSchema: geminiProductAnalysisSchema
         }
       })
 
@@ -60,9 +60,14 @@ export class GeminiAIService implements AIService {
         throw new HttpError(500, 'AI_EMPTY_RESPONSE', 'AI service returned an empty response')
       }
 
-      const parsed = productAnalysisSchema.parse(JSON.parse(content))
+      // Validate formatting but trust structure since it was constrained by responseSchema
+      try {
+        JSON.parse(content)
+      } catch (e) {
+        throw new HttpError(500, 'AI_INVALID_RESPONSE', 'AI service returned malformed JSON')
+      }
 
-      return JSON.stringify(parsed)
+      return content
     } catch (error) {
       if (error instanceof HttpError) {
         throw error

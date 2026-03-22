@@ -6,7 +6,6 @@ import type { Bindings } from '../types'
 interface AnalyzeProxyRequest {
   imageBase64?: string
   mimeType?: string
-  prompt?: string
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
@@ -56,7 +55,7 @@ export class GeminiProxyDO {
 
       const imageBuffer = base64ToArrayBuffer(body.imageBase64)
       const aiService = GeminiAIService.getInstance(this.env.GEMINI_API_KEY)
-      const result = await aiService.analyzeImage(imageBuffer, body.mimeType, body.prompt)
+      const result = await aiService.analyzeImage(imageBuffer, body.mimeType)
 
       return Response.json({ result })
     } catch (error) {

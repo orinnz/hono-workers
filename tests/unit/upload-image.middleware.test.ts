@@ -50,7 +50,6 @@ describe('parseAndValidateAnalyzeMultipart', () => {
   it('returns parsed payload when valid', async () => {
     const form = new FormData()
     form.append('image', new Blob(['image-content'], { type: 'image/png' }), 'ok.png')
-    form.append('prompt', 'describe this image')
 
     const request = new Request('http://localhost/test', {
       method: 'POST',
@@ -61,6 +60,5 @@ describe('parseAndValidateAnalyzeMultipart', () => {
 
     expect(parsed.image.name).toBe('ok.png')
     expect(parsed.image.type).toBe('image/png')
-    expect(parsed.prompt).toBe('describe this image')
   })
 })

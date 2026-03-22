@@ -1,6 +1,5 @@
 import type { ContentfulStatusCode } from 'hono/utils/http-status'
 import { HttpError, isHttpError } from '../lib/http-error'
-import { DEFAULT_IMAGE_PROMPT } from '../lib/constants'
 import { parseAndValidateAnalyzeMultipart } from '../middleware/upload-image'
 import { GeminiAIService, type AIService } from '../services/ai/gemini-ai.service'
 import { DurableObjectAIService } from '../services/ai/durable-object-ai.service'
@@ -86,7 +85,7 @@ export class AIAnalysisHandler {
   async analyze(c: AppContext) {
     try {
       console.info('Starting image analysis request')
-      const { image, prompt } = await parseAndValidateAnalyzeMultipart(c.req.raw)
+      const { image } = await parseAndValidateAnalyzeMultipart(c.req.raw)
 
       const storageService = new UploadStorageService(c.env.BUCKET)
       const dbService = new ImageAnalysisService(c.env.DB)
@@ -96,7 +95,7 @@ export class AIAnalysisHandler {
       const imageBuffer = await image.arrayBuffer()
 
       console.info('Calling AI service for image analysis')
-      const aiResponse = await aiService.analyzeImage(imageBuffer, image.type, prompt)
+      const aiResponse = await aiService.analyzeImage(imageBuffer, image.type)
       console.info('AI service call succeeded')
 
       console.info('Saving image analysis record to database')
@@ -104,8 +103,7 @@ export class AIAnalysisHandler {
         imageUrl,
         originalName: image.name,
         mimeType: image.type,
-        aiResponse,
-        promptUsed: prompt ?? DEFAULT_IMAGE_PROMPT
+        aiResponse
       })
       console.info('Saved image analysis record to database', { id: record.id })
 
@@ -114,8 +112,7 @@ export class AIAnalysisHandler {
         imageUrl: record.imageUrl,
         originalName: record.originalName,
         mimeType: record.mimeType,
-        aiResponse: parseAIResponse(record.aiResponse),
-        promptUsed: record.promptUsed
+        aiResponse: parseAIResponse(record.aiResponse)
       }, 201)
     } catch (error) {
       console.error('Image analysis request failed', { error })

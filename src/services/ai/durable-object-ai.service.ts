@@ -28,7 +28,7 @@ export class DurableObjectAIService implements AIService {
     private readonly locationHint: DurableObjectLocationHint = 'oc'
   ) {}
 
-  async analyzeImage(imageBuffer: ArrayBuffer, mimeType: string, prompt?: string): Promise<string> {
+  async analyzeImage(imageBuffer: ArrayBuffer, mimeType: string): Promise<string> {
     let response: Response
 
     try {
@@ -45,8 +45,7 @@ export class DurableObjectAIService implements AIService {
         },
         body: JSON.stringify({
           imageBase64: arrayBufferToBase64(imageBuffer),
-          mimeType,
-          prompt
+          mimeType
         })
       })
     } catch (error) {

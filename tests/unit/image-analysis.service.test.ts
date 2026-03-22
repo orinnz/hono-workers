@@ -12,8 +12,7 @@ describe('ImageAnalysisService', () => {
       imageUrl: '/uploads/demo.png',
       originalName: 'demo.png',
       mimeType: 'image/png',
-      aiResponse: 'A demo image',
-      promptUsed: 'describe demo'
+      aiResponse: 'A demo image'
     })
 
     const loaded = await service.getImageAnalysis(created.id)
@@ -31,15 +30,13 @@ describe('ImageAnalysisService', () => {
       imageUrl: '/uploads/one.png',
       originalName: 'one.png',
       mimeType: 'image/png',
-      aiResponse: 'one',
-      promptUsed: 'p1'
+      aiResponse: 'one'
     })
     await service.createImageAnalysis({
       imageUrl: '/uploads/two.png',
       originalName: 'two.png',
       mimeType: 'image/png',
-      aiResponse: 'two',
-      promptUsed: 'p2'
+      aiResponse: 'two'
     })
 
     const result = await service.getAllImageAnalyses(1, 0)

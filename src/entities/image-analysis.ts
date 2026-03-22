@@ -5,7 +5,6 @@ export interface ImageAnalysis extends BaseEntity {
   original_name: string
   mime_type: string
   ai_response: string
-  prompt_used: string | null
 }
 
 export interface CreateImageAnalysisInput {
@@ -13,7 +12,6 @@ export interface CreateImageAnalysisInput {
   originalName: string
   mimeType: string
   aiResponse: string
-  promptUsed?: string
 }
 
 export interface ImageAnalysisResponse {
@@ -22,7 +20,6 @@ export interface ImageAnalysisResponse {
   originalName: string
   mimeType: string
   aiResponse: string
-  promptUsed: string | null
   createdAt: string
 }
 

@@ -1,4 +1,4 @@
--- D1 Database Schema
+-- Migration number: 0000 	 2024-03-22T00:00:00.000Z
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
@@ -8,10 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create index on email for faster lookups
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-
--- Create index on created_at for sorting
 CREATE INDEX IF NOT EXISTS idx_users_created_at ON users(created_at);
 
 -- Tasks table (for queue processing history)
@@ -24,7 +21,6 @@ CREATE TABLE IF NOT EXISTS tasks (
   processed_at DATETIME
 );
 
--- Create index on status for filtering
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 
 -- Image analysis table
