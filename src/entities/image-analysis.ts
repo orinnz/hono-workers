@@ -1,11 +1,11 @@
-export interface ImageAnalysis {
-  id: number
+import { BaseEntity, Pagination } from "./index";
+
+export interface ImageAnalysis extends BaseEntity {
   image_url: string
   original_name: string
   mime_type: string
   ai_response: string
   prompt_used: string | null
-  created_at: string
 }
 
 export interface CreateImageAnalysisInput {
@@ -28,9 +28,5 @@ export interface ImageAnalysisResponse {
 
 export interface ListImageAnalysesResult {
   data: ImageAnalysisResponse[]
-  pagination: {
-    limit: number
-    offset: number
-    total: number
-  }
+  pagination: Pagination
 }
