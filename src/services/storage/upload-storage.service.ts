@@ -1,5 +1,7 @@
 import type { R2Bucket } from '@cloudflare/workers-types'
 import { HttpError } from '../../lib/http-error'
+import { S3Client } from '@aws-sdk/client-s3'
+import { AppContext } from '../../types'
 
 const mimeTypeToExtension: Record<string, string> = {
   'image/jpeg': '.jpg',
@@ -46,4 +48,15 @@ export class UploadStorageService {
   async getImage(filename: string) {
     return this.bucket.get(`uploads/${filename}`)
   }
+
+  async getSignedUrl(c: AppContext): Promise<string> {
+    const S3 = new S3Client({
+      region: "auto",
+      endpoint: `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: ,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+      }
+    })
+    
 }
