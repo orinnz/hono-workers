@@ -55,7 +55,7 @@ describe('AI routes integration', () => {
     const form = new FormData()
     form.append('image', new Blob(['image-bytes'], { type: 'image/png' }), 'demo.png')
 
-    const response = await app.request('/api/ai/analyze', {
+    const response = await app.request('/api/ai/scan', {
       method: 'POST',
       body: form
     }, env)
@@ -88,7 +88,7 @@ describe('AI routes integration', () => {
     const form = new FormData()
     form.append('prompt', 'describe image')
 
-    const response = await app.request('/api/ai/analyze', {
+    const response = await app.request('/api/ai/scan', {
       method: 'POST',
       body: form
     }, env)
@@ -103,12 +103,12 @@ describe('AI routes integration', () => {
     const form = new FormData()
     form.append('image', new Blob(['image-bytes'], { type: 'image/png' }), 'demo.png')
 
-    await app.request('/api/ai/analyze', {
+    await app.request('/api/ai/scan', {
       method: 'POST',
       body: form
     }, env)
 
-    const response = await app.request('/api/ai/analyses?limit=20&offset=0', {
+    const response = await app.request('/api/ai/scan?limit=20&offset=0', {
       method: 'GET'
     }, env)
 
@@ -127,7 +127,7 @@ describe('AI routes integration', () => {
     const app = createApp({ aiService: mockedAIService })
     const env = createTestEnv()
 
-    const response = await app.request('/api/ai/analyses/9999', {
+    const response = await app.request('/api/ai/scan/9999', {
       method: 'GET'
     }, env)
 

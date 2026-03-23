@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from 'vitest'
-import { DEFAULT_IMAGE_PROMPT } from '../../src/lib/constants'
 import { GeminiAIService } from '../../src/services/ai/gemini-ai.service'
 
 const generateContentMock = vi.fn()
 
-vi.mock('@google/genai', () => {
+vi.mock('@google/genai', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@google/genai')>()
   return {
+    ...actual,
     GoogleGenAI: class {
       models = {
         generateContent: generateContentMock
@@ -45,7 +46,7 @@ describe('GeminiAIService', () => {
       })
     })
 
-    const output = await service.analyzeImage(new TextEncoder().encode('abc').buffer, 'image/png', '')
+    const output = await service.analyzeImage(new TextEncoder().encode('abc').buffer, 'image/png')
 
     expect(JSON.parse(output)).toMatchObject({
       product_name: 'Coca-Cola Original Taste',
@@ -57,7 +58,7 @@ describe('GeminiAIService', () => {
       config: { responseMimeType: string }
     }
 
-    expect(callArg.contents[0].parts[0].text).toBe(DEFAULT_IMAGE_PROMPT)
+    expect(callArg.contents[0].parts[0].text).toBe('Analyze this food image.')
     expect(callArg.config.responseMimeType).toBe('application/json')
   })
 })
